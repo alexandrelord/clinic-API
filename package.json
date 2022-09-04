@@ -1,0 +1,12 @@
+{
+    "name": "clinic-api",
+    "version": "0.1.0",
+    "private": true,
+    "scripts": {
+        "start": "concurrently \"npm start --prefix frontend\" \"npm start --prefix backend\"",
+        "install": "npm --prefix frontend install && npm --prefix backend install"
+    },
+    "dependencies": {
+        "concurrently": "^7.3.0"
+    }
+}

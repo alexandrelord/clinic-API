@@ -1,4 +1,4 @@
-# clinic-API
+# clinic-web-app
 
 
 ## The App

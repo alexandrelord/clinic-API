@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-export interface isAppointment {
+export interface IAppointment {
     patient: string;
     provider: string;
     availability: {
@@ -23,4 +23,4 @@ const AppointmentSchema: Schema = new Schema(
     { timestamps: true }
 );
 
-export default mongoose.model<isAppointment>('Appointment', AppointmentSchema);
+export default mongoose.model<IAppointment>('Appointment', AppointmentSchema);

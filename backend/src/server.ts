@@ -1,7 +1,7 @@
-import http from 'http';
 import express, { Express } from 'express';
-import morgan from 'morgan';
 import mongoose from 'mongoose';
+import morgan from 'morgan';
+import chalk from 'chalk';
 import { config } from './config/config';
 
 import providerRoutes from './routes/ProviderRoutes';
@@ -15,15 +15,14 @@ const router: Express = express();
 mongoose
     .connect(config.mongo.url, { retryWrites: true, w: 'majority' })
     .then(() => {
-        console.log('MongoDB connected');
+        console.log(chalk.green('MongoDB connected'));
     })
     .catch((err) => {
-        console.log(err);
+        console.error(err);
     });
 
 /** Middleware */
 router.use(morgan('dev'));
-router.use(express.urlencoded({ extended: true }));
 router.use(express.json());
 
 /** Rules of our API */
@@ -37,26 +36,25 @@ router.use((req, res, next) => {
     next();
 });
 
+/** HealthCheck */
+router.get('/ping', (req, res) => res.status(200).json({ message: 'pong' }));
+
 /** Routes */
 router.use('/api/providers', providerRoutes);
 router.use('/api/patients', patientRoutes);
 router.use('/api/appointments', appointmentRoutes);
 router.use('/api/availabilities', availabilityRoutes);
-
-/** HealthCheck */
-router.get('/ping', (req, res) => res.status(200).json({ message: 'pong' }));
-
-/** Error handling */
-router.use((req, res, next) => {
+router.use((req, res) => {
     const error = new Error('Not found');
     return res.status(404).json({
         message: error.message
     });
 });
 
+/** Error handling */
+
 /**  Server */
-const httpServer = http.createServer(router);
 const PORT = process.env.SERVER_PORT;
-httpServer.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+router.listen(PORT, () => {
+    console.log(chalk.white(`Server is running on port ${PORT}`));
 });

@@ -1,36 +1,25 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import Appointment from '../models/Appointment';
 
-const createAppointment = async (req: Request, res: Response, next: NextFunction) => {
-    const provider = req.body.provider;
-    const availability = req.body.availability;
-    console.log(req.body);
-
+export const createAppointment = async (req: Request, res: Response) => {
     try {
         const appointment = new Appointment(req.body);
         await appointment.save();
-        return res.status(200).json(appointment);
+        res.status(200).json({ appointment });
     } catch (error) {
-        return res.status(500).json({ message: error });
+        res.status(500).json({ message: 'Something went wrong. Please try again later.' });
     }
 };
 
-const getAppointments = async (req: Request, res: Response, next: NextFunction) => {
+export const getAppointments = async (req: Request, res: Response) => {
     try {
-        let appointments: object[] = [];
-        if (req.method === 'GET') {
-            appointments = await Appointment.find({});
-        } else if (req.method === 'POST') {
-            appointments = await Appointment.find({ patient: req.body.patient });
-        }
+        const appointments = await Appointment.find({ patient: req.body.patient });
         if (appointments.length > 0) {
-            return res.status(200).json(appointments);
+            res.status(200).json({ appointments });
         } else {
-            return res.status(204).send();
+            res.status(404).json({ message: 'No appointments found' });
         }
     } catch (error) {
-        res.status(500).json({ message: error });
+        res.status(500).json({ message: 'Something went wrong. Please try again later.' });
     }
 };
-
-export default { createAppointment, getAppointments };

@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-export interface isPatient {
+export interface IPatient {
     _id: string;
     name: string;
     surname: string;
@@ -15,7 +15,7 @@ const PatientSchema: Schema = new Schema(
     { timestamps: true }
 );
 
-export default mongoose.model<isPatient>('Patient', PatientSchema);
+export default mongoose.model<IPatient>('Patient', PatientSchema);
 
 /** Ovewritting _id must be done before => https://mongoosejs.com/docs/guide.html#_id */
 // PatientSchema.pre('save', async function (next) {

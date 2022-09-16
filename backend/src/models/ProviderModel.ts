@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 
-export interface isProvider {
+export interface IProvider {
     _id: string;
     name: string;
     surname: string;
@@ -15,4 +15,4 @@ const ProviderSchema: Schema = new Schema(
     { timestamps: true }
 );
 
-export default mongoose.model<isProvider>('Provider', ProviderSchema);
+export default mongoose.model<IProvider>('Provider', ProviderSchema);

@@ -1,28 +1,30 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import Patient from '../models/Patient';
 
-const createPatient = async (req: Request, res: Response, next: NextFunction) => {
+export const registerPatient = async (req: Request, res: Response) => {
     try {
         const patient = new Patient(req.body);
         patient._id = patient.name + patient.surname;
+        console.log(patient);
+        if (await Patient.findOne({ _id: patient._id })) {
+            res.status(400).json({ error: 'Patient already exists.' });
+        }
         await patient.save();
-        return res.status(200).json(patient);
+        res.status(200).json({ patient });
     } catch (error) {
-        res.status(500).json({ message: error });
+        res.status(500).json({ message: 'Something went wrong. Please try again later.' });
     }
 };
 
-const getPatient = async (req: Request, res: Response, next: NextFunction) => {
-    const patientId = req.body.name + req.body.surname;
+export const loginPatient = async (req: Request, res: Response) => {
+    const patientId: string = req.body.name + req.body.surname;
     try {
         const patient = await Patient.findOne({ _id: patientId });
         if (!patient) {
-            return res.status(204).send();
+            res.status(404).send('Patient not found.');
         }
-        return res.status(200).json(patient);
+        res.status(200).json({ patient });
     } catch (error) {
-        res.status(500).json({ message: error });
+        res.status(500).json({ message: 'Something went wrong. Please try again later.' });
     }
 };
-
-export default { createPatient, getPatient };

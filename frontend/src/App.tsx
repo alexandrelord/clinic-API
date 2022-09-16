@@ -1,9 +1,9 @@
 import Layout from './components/Layout';
 
-import BookAppointment from './pages/BookAppointment';
-import Appointments from './pages/Appointments';
+import BookAppointment from './components/BookAppointment/BookAppointment';
+import Appointments from './components/Appointments/Appointments';
 import Missing from './components/Missing';
-import AuthPage from './pages/AuthPage';
+import AuthPage from './components/Auth/AuthPage';
 
 import { Routes, Route } from 'react-router-dom';
 

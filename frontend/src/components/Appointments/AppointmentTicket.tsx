@@ -1,3 +1,6 @@
+/** Types */
+import { IAppointment } from './types';
+
 /** MUI Components */
 import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
@@ -17,7 +20,7 @@ const timeFormat: object = {
     minute: '2-digit'
 };
 
-const AppointmentTicket = (props: { appointment: any; ticketNumber: number }) => {
+const AppointmentTicket = (props: { appointment: IAppointment; ticketNumber: number }) => {
     return (
         <Box
             sx={{

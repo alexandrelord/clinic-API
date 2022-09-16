@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from '../utils/axios';
+import api from '../../services/api';
 
 /** Custom Components */
-import AlertMessage from './AlertMessage';
+import AlertMessage from '../AlertMessage';
 
 /**MUI Components */
 import TextField from '@mui/material/TextField';
@@ -21,20 +21,15 @@ const LoginForm = () => {
         e.preventDefault();
 
         try {
-            const response = await axios.post('/api/patients/login', {
-                name,
-                surname
-            });
-            if (response.status === 200) {
+            const response = await api({ url: '/api/patients', method: 'POST', data: { name, surname } });
+            if (response.patient) {
                 localStorage.setItem('patient', response.data._id);
                 setName('');
                 setSurname('');
                 navigate('/appointments');
-            } else if (response.status === 204) {
-                setErrorMsg('Patient does not exist in our database. Make sure you have entered the correct name and surname.');
             }
         } catch (error) {
-            setErrorMsg('Something went wrong. Please try again later.');
+            error instanceof Error && setErrorMsg(error.message);
         }
     };
 

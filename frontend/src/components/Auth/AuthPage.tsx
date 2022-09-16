@@ -1,5 +1,5 @@
 /** Custom Components */
-import ShowLogin from '../components/ShowLogin';
+import ShowLogin from './ShowLogin';
 
 /** MUI Components */
 import Container from '@mui/material/Container';

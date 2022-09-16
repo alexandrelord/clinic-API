@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
-import axios from '../utils/axios';
+import api from '../../services/api';
+
+/** Types */
+import { IProviders, IDates, ITimeSlots } from './types';
 
 /** Custom components */
-import AppointmentTable from '../components/AppointmentTable';
+import AppointmentTable from './BookAppointmentTable';
 
 /** MUI components */
 import Container from '@mui/material/Container';
@@ -20,54 +23,43 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 const BookAppointment = () => {
-    const [provider, setProvider] = useState<any | null>({});
-    const [providers, setProviders] = useState<any[]>([]);
-    const [providerValue, setProviderValue] = useState<number>(-1);
-    const [availabilities, setAvailabilities] = useState<EpochTimeStamp[]>([]);
-    const [startDateValue, setStartDateValue] = useState<EpochTimeStamp | null>(null);
-    const [endDateValue, setEndDateValue] = useState<EpochTimeStamp | null>(null);
+    const [provider, setProvider] = useState<IProviders | undefined>();
+    const [providers, setProviders] = useState<IProviders[]>([]);
+    const [availabilities, setAvailabilities] = useState<ITimeSlots[]>([]);
+    const [selectedProvider, setSelectedProvider] = useState(-1);
+    const [selectedDates, setSelectedDates] = useState<IDates>({} as IDates);
 
     useEffect(() => {
-        const getProviders = async () => {
+        (async () => {
             try {
-                const response = await axios.get('/api/providers');
-                if (response.status === 200) {
-                    setProviders(response.data);
+                const response = await api({ url: '/api/providers', method: 'GET' });
+                if (response.providers) {
+                    setProviders(response.providers);
+                    setProvider(providers[selectedProvider]);
                 }
             } catch (error) {
-                console.log(error);
+                error instanceof Error && console.log(error.message);
             }
-        };
-        getProviders();
+        })();
     }, []);
 
     const handleAvailabilitySubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-
-        try {
-            if (startDateValue) {
-                const response = await axios.post('/api/availabilities', { provider: providers[providerValue]._id, startDate: startDateValue, endDate: endDateValue });
-                setProvider(providers[providerValue]);
-                if (response.status === 200) {
-                    setAvailabilities(response.data);
-                }
+        if (selectedDates.startDate) {
+            try {
+                const response = await api({
+                    url: '/api/availabilities',
+                    method: 'POST',
+                    data: {
+                        provider: selectedProvider,
+                        startDate: selectedDates.startDate,
+                        endDate: selectedDates.endDate
+                    }
+                });
+                response.availabilities && setAvailabilities(response.availabilities);
+            } catch (error) {
+                error instanceof Error && console.log(error.message);
             }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-
-    const handleRadioChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setProviderValue(Number(event.target.value));
-    };
-    const handleStartDateChange = (date: Date | null) => {
-        if (date) {
-            setStartDateValue(date.getTime());
-        }
-    };
-    const handleEndDateChange = (date: Date | null) => {
-        if (date) {
-            setEndDateValue(date.getTime());
         }
     };
 
@@ -75,13 +67,13 @@ const BookAppointment = () => {
         <Container maxWidth="md" sx={{ mt: 10 }}>
             <FormControl sx={{ my: 10 }}>
                 <FormLabel>Providers</FormLabel>
-                <RadioGroup name="radio-buttons-group" onChange={handleRadioChange}>
+                <RadioGroup name="radio-buttons-group" onChange={(event: React.ChangeEvent<HTMLInputElement>) => setSelectedProvider(Number(event.target.value))}>
                     {providers.map((provider, index) => {
                         return <FormControlLabel key={index} value={index} control={<Radio />} label={`${provider.name} ${provider.surname}`} />;
                     })}
                 </RadioGroup>
             </FormControl>
-            {providerValue >= 0 ? (
+            {selectedProvider >= 0 ? (
                 <Stack direction="row" spacing={2} sx={{ my: 10 }}>
                     <Box component="form" onSubmit={handleAvailabilitySubmit}>
                         <Stack spacing={2}>
@@ -89,15 +81,19 @@ const BookAppointment = () => {
                                 <DesktopDatePicker
                                     label="Start Date"
                                     inputFormat="dd/MM/yyyy"
-                                    value={startDateValue}
-                                    onChange={handleStartDateChange}
+                                    value={selectedDates.startDate ? selectedDates.startDate : null}
+                                    onChange={(date: Date | null) => {
+                                        date && setSelectedDates({ ...selectedDates, startDate: date.getTime() });
+                                    }}
                                     renderInput={(params) => <TextField {...params} autoComplete="off" />}
                                 />
                                 <DesktopDatePicker
                                     label="End Date"
                                     inputFormat="dd/MM/yyyy"
-                                    value={endDateValue}
-                                    onChange={handleEndDateChange}
+                                    value={selectedDates.endDate ? selectedDates.endDate : null}
+                                    onChange={(date: Date | null) => {
+                                        date && setSelectedDates({ ...selectedDates, endDate: date.getTime() });
+                                    }}
                                     renderInput={(params) => <TextField {...params} autoComplete="off" />}
                                 />
                             </LocalizationProvider>
@@ -107,7 +103,7 @@ const BookAppointment = () => {
                         </Stack>
                     </Box>
 
-                    <AppointmentTable provider={provider} availabilities={availabilities} />
+                    <AppointmentTable provider={provider} timeSlots={availabilities} />
                 </Stack>
             ) : null}
         </Container>

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 /** Custom Components */
-import SignUpForm from '../components/SignUpForm';
-import LoginForm from '../components/LoginForm';
+import SignUpForm from './SignUpForm';
+import LoginForm from './LoginForm';
 
 /** MUI Components */
 import Typography from '@mui/material/Typography';

@@ -35,11 +35,7 @@ const Appointments: FunctionComponent = (): JSX.Element => {
         })();
     }, []);
 
-    return (
-        <Container sx={{ mt: 20 }}>
-            <Grid container>{!errorMsg ? renderAppointments(appointments) : <AlertMessage errorMsg={errorMsg} />}</Grid>
-        </Container>
-    );
+    return <Container sx={{ mt: 20 }}>{<Grid container>{!errorMsg ? renderAppointments(appointments) : <AlertMessage errorMsg={errorMsg} />}</Grid>}</Container>;
 };
 
 export default Appointments;

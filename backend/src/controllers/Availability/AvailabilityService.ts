@@ -2,16 +2,16 @@ import { ITimeSlot } from './types';
 
 const timeSlotInMs = 1000 * 60 * 15; // 15 minutes in milliseconds
 const nextDay = 1000 * 60 * 60 * 24; // 1 day in milliseconds
-const timeSlots: ITimeSlot[] = [];
+let timeSlots: ITimeSlot[] = [];
 
-export const getTimeSlotsForRange = (startDate: EpochTimeStamp, endDate: EpochTimeStamp, bookedTimeSlots: ITimeSlot[]) => {
+export const getTimeSlotsForRange = (startDate: EpochTimeStamp, endDate: EpochTimeStamp | null, bookedTimeSlots: ITimeSlot[]) => {
+    timeSlots = [];
     let currentDate = startDate;
     if (!endDate) endDate = startDate;
     while (currentDate <= endDate) {
         getTimeSlotsForDay(currentDate, 9, 11, bookedTimeSlots);
         currentDate += nextDay;
     }
-
     return timeSlots;
 };
 

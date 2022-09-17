@@ -32,17 +32,16 @@ const AppointmentTable = (props: { provider: IProviders | undefined; timeSlots: 
         { field: 'startTime', headerName: 'Start Time', width: 150 },
         { field: 'endTime', headerName: 'End Time', width: 150 }
     ];
-    const rows: object[] = props.timeSlots
-        ? props.timeSlots.map((timeSlot, index) => {
-              return {
-                  id: index,
-                  provider: props.provider?.name + ' ' + props.provider?.surname,
-                  date: new Date(timeSlot.startTime).toLocaleDateString('en-GB', dateFormat),
-                  startTime: new Date(timeSlot.startTime).toLocaleTimeString('en-GB', timeFormat),
-                  endTime: new Date(timeSlot.endTime).toLocaleTimeString('en-GB', timeFormat)
-              };
-          })
-        : [];
+
+    const rows = props.timeSlots.map((timeSlot, index) => {
+        return {
+            id: index,
+            provider: `${props.provider?.name} ${props.provider?.surname}`,
+            date: new Date(timeSlot.startTime).toLocaleDateString('en-GB', dateFormat),
+            startTime: new Date(timeSlot.startTime).toLocaleTimeString('en-GB', timeFormat),
+            endTime: new Date(timeSlot.endTime).toLocaleTimeString('en-GB', timeFormat)
+        };
+    });
 
     const handleBookAppointment = async () => {
         try {
@@ -53,7 +52,7 @@ const AppointmentTable = (props: { provider: IProviders | undefined; timeSlots: 
                     data: {
                         patient: localStorage.getItem('patient'),
                         provider: props.provider?._id,
-                        timeSlot: {
+                        availability: {
                             startTime: props.timeSlots[rowId].startTime,
                             endTime: props.timeSlots[rowId].endTime
                         }

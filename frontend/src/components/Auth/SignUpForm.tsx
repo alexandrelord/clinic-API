@@ -21,9 +21,9 @@ const SignUpForm = () => {
         e.preventDefault();
 
         try {
-            const response = await api({ url: '/api/patients', method: 'POST', data: { name, surname } });
+            const response = await api({ url: '/api/patients/create', method: 'POST', data: { name, surname } });
             if (response.patient) {
-                localStorage.setItem('patient', response.data._id);
+                localStorage.setItem('patient', response.patient._id);
                 setName('');
                 setSurname('');
                 navigate('/appointments');

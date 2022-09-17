@@ -13,11 +13,11 @@ const api = async <T>(resource: IResource<T>) => {
         body: JSON.stringify(resource.data)
     };
     const response = await fetch(resource.url, options);
+    console.log(response);
     const data = await response.json();
     console.log(data);
     if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message);
+        throw new Error(data.message);
     }
     return data;
 };

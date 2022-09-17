@@ -35,7 +35,6 @@ const BookAppointment = () => {
                 const response = await api({ url: '/api/providers', method: 'GET' });
                 if (response.providers) {
                     setProviders(response.providers);
-                    setProvider(providers[selectedProvider]);
                 }
             } catch (error) {
                 error instanceof Error && console.log(error.message);
@@ -56,7 +55,10 @@ const BookAppointment = () => {
                         endDate: selectedDates.endDate
                     }
                 });
-                response.availabilities && setAvailabilities(response.availabilities);
+                if (response.availabilities) {
+                    setAvailabilities(response.availabilities);
+                    setProvider(providers[selectedProvider]);
+                }
             } catch (error) {
                 error instanceof Error && console.log(error.message);
             }

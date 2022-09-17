@@ -21,6 +21,8 @@ const timeFormat: object = {
 };
 
 const AppointmentTicket = (props: { appointment: IAppointment; ticketNumber: number }) => {
+    const { startTime, endTime } = props.appointment.availability;
+    const { patient, provider } = props.appointment;
     return (
         <Box
             sx={{
@@ -44,7 +46,7 @@ const AppointmentTicket = (props: { appointment: IAppointment; ticketNumber: num
                             Patient:
                         </Typography>
                         <Typography variant="body1" component="p">
-                            {props.appointment.patient}
+                            {patient}
                         </Typography>
                     </Stack>
                     <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -52,7 +54,7 @@ const AppointmentTicket = (props: { appointment: IAppointment; ticketNumber: num
                             Provider:
                         </Typography>
                         <Typography variant="body1" component="p">
-                            {props.appointment.provider}
+                            {provider}
                         </Typography>
                     </Stack>
                     <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -68,7 +70,7 @@ const AppointmentTicket = (props: { appointment: IAppointment; ticketNumber: num
                             Start Time:
                         </Typography>
                         <Typography variant="body1" component="p">
-                            {new Date(props.appointment.availability.startTime).toLocaleTimeString('en-GB', timeFormat)}
+                            {new Date(startTime).toLocaleTimeString('en-GB', timeFormat)}
                         </Typography>
                     </Stack>
                     <Stack direction="row" sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -76,7 +78,7 @@ const AppointmentTicket = (props: { appointment: IAppointment; ticketNumber: num
                             End Time:
                         </Typography>
                         <Typography variant="body1" component="p">
-                            {new Date(props.appointment.availability.endTime).toLocaleTimeString('en-GB', timeFormat)}
+                            {new Date(endTime).toLocaleTimeString('en-GB', timeFormat)}
                         </Typography>
                     </Stack>
                 </Stack>

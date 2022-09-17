@@ -6,7 +6,7 @@ import { ITimeSlot } from './types';
 const getAvailabilities = async (req: Request, res: Response) => {
     const { provider }: { provider: number } = req.body;
     const { startDate }: { startDate: EpochTimeStamp } = req.body;
-    const { endDate }: { endDate: EpochTimeStamp } = req.body || null;
+    const endDate = req.body.endDate || null;
     let bookedAppointments: IAppointment[] = [];
 
     try {
@@ -17,11 +17,13 @@ const getAvailabilities = async (req: Request, res: Response) => {
         }
         //get time booked time slots for each appointment
         const bookedTimeSlots = bookedAppointments.map((bookedAppointment) => bookedAppointment.availability);
+
         // get available time slots for date range
-        const timeSlots: ITimeSlot[] = getTimeSlotsForRange(startDate, endDate, bookedTimeSlots);
-        res.status(200).json({ availabilities: timeSlots });
+        let timeSlots: ITimeSlot[] = [];
+        timeSlots = getTimeSlotsForRange(startDate, endDate, bookedTimeSlots);
+        return res.status(200).json({ availabilities: timeSlots });
     } catch (error) {
-        res.status(500).json({ message: 'Something went wrong' });
+        return res.status(500).json({ message: 'Something went wrong' });
     }
 };
 
